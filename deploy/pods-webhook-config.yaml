@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Template
+parameters:
+- name: WEBHOOK_NAME
+  required: true
+  description: Name of webhook to deploy
+- name: WEBHOOK_NAMESPACE
+  required: true
+  description: Name of namespace where webhook is being deployed
+objects:
+- apiVersion: admissionregistration.k8s.io/v1beta1
+  kind: MutatingWebhookConfiguration
+  metadata:
+    labels:
+      webhook: ${WEBHOOK_NAME}
+    annotations:
+      service.beta.openshift.io/inject-cabundle: "true"
+    name: ${WEBHOOK_NAME}-pods
+  webhooks:
+  - name: ${WEBHOOK_NAME}-pods.admission.online.openshift.io
+    failurePolicy: Fail
+    namespaceSelector:
+      matchLabels:
+        special.compliance.enabled: "true"
+    rules:
+    - operations:
+      - CREATE
+      apiGroups:
+      - "*"
+      apiVersions:
+      - "*"
+      resources:
+      - pods
+    clientConfig:
+      service:
+        name: ${WEBHOOK_NAME}
+        namespace: ${WEBHOOK_NAMESPACE}
+        path: /admissions/pods

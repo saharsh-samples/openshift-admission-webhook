@@ -202,6 +202,8 @@ func TestInitFromEnvironment(t *testing.T) {
 	// arrange
 	os.Setenv("MAW_SERVER_STARTUP_TIMEOUT_SECONDS", "10")
 	os.Setenv("PORT", "80")
+	os.Setenv("MAW_TLS_CERT_FILE_PATH", "tls-cert-path")
+	os.Setenv("MAW_TLS_KEY_FILE_PATH", "tls-key-path")
 
 	// act
 	appConfig := &AppConfig{}
@@ -210,6 +212,8 @@ func TestInitFromEnvironment(t *testing.T) {
 	// assert
 	test.AssertEquals("", 10, appConfig.HTTPConfig.StartupTimeoutInSeconds, t)
 	test.AssertEquals("", 80, appConfig.HTTPConfig.Port, t)
+	test.AssertEquals("", "tls-cert-path", appConfig.HTTPConfig.TLSCertFilePath, t)
+	test.AssertEquals("", "tls-key-path", appConfig.HTTPConfig.TLSKeyFilePath, t)
 
 }
 
@@ -218,6 +222,8 @@ func TestInitFromEnvironment_for_defaults(t *testing.T) {
 	// arrange
 	os.Setenv("MAW_SERVER_STARTUP_TIMEOUT_SECONDS", "")
 	os.Setenv("PORT", "")
+	os.Setenv("MAW_TLS_CERT_FILE_PATH", "")
+	os.Setenv("MAW_TLS_KEY_FILE_PATH", "")
 
 	// act
 	appConfig := &AppConfig{}
@@ -225,5 +231,7 @@ func TestInitFromEnvironment_for_defaults(t *testing.T) {
 
 	// assert
 	test.AssertEquals("", 5, appConfig.HTTPConfig.StartupTimeoutInSeconds, t)
-	test.AssertEquals("", 8080, appConfig.HTTPConfig.Port, t)
+	test.AssertEquals("", 8443, appConfig.HTTPConfig.Port, t)
+	test.AssertEquals("", "/tls/tls.crt", appConfig.HTTPConfig.TLSCertFilePath, t)
+	test.AssertEquals("", "/tls/tls.key", appConfig.HTTPConfig.TLSKeyFilePath, t)
 }

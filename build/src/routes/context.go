@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"maw/integrations"
+
 	"github.com/saharsh-samples/go-mux-sql-starter/http"
 	"github.com/saharsh-samples/go-mux-sql-starter/http/routes"
 	"github.com/saharsh-samples/go-mux-sql-starter/http/utils"
@@ -11,7 +13,9 @@ type ContextIn struct {
 
 	// HTTP Utils dependencies
 	JSONUtils utils.JSONUtils
-	URLUtils  utils.URLUtils
+
+	// integrations
+	SpecialProvider integrations.SpecialProvider
 }
 
 // ContextOut describes dependencies exported by this package
@@ -30,6 +34,18 @@ func Bootstrap(in *ContextIn) *ContextOut {
 
 		// health check
 		&routes.LivenessCheck{},
+
+		// mutating admission webhook for pods
+		&podMutator{
+			specialProvider: in.SpecialProvider,
+			jsonUtils:       in.JSONUtils,
+		},
+
+		// mutating admission webhook for namespaces
+		&namespaceMutator{
+			specialProvider: in.SpecialProvider,
+			jsonUtils:       in.JSONUtils,
+		},
 	}
 
 	return out

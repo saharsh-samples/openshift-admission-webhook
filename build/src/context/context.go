@@ -3,6 +3,7 @@ package context
 import (
 	"fmt"
 	"maw/config"
+	"maw/integrations"
 	"maw/routes"
 
 	"github.com/saharsh-samples/go-mux-sql-starter/app"
@@ -20,18 +21,27 @@ func Build() *app.ContextOut {
 	// http utils
 	httpUtilsOut := httpUtils.Bootstrap(&httpUtils.ContextIn{})
 
+	// integrations
+	integrationsOut := integrations.Bootstrap(nil)
+
 	// http routes
 	routesOut := routes.Bootstrap(&routes.ContextIn{
 
 		// http utils
 		JSONUtils: httpUtilsOut.JSONUtils,
-		URLUtils:  httpUtilsOut.URLUtils,
+
+		// integrations
+		SpecialProvider: integrationsOut.SpecialProvider,
 	})
 
 	// http base
 	httpOut := http.Bootstrap(&http.ContextIn{
 		Port:             appConfig.HTTPConfig.Port,
 		RoutesToRegister: routesOut.RoutesToRegister,
+		TLSConfiguration: &http.TLSConfiguration{
+			CertFile: appConfig.HTTPConfig.TLSCertFilePath,
+			KeyFile:  appConfig.HTTPConfig.TLSKeyFilePath,
+		},
 	})
 
 	// app

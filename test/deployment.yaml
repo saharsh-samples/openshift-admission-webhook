@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Template
+parameters:
+- name: APP_NAMESPACE
+  required: true
+  description: Name of namespace where app is being deployed
+- name: APP_NAME
+  required: true
+  description: Name of app to deploy
+  value: test-deploy
+objects:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: ${APP_NAME}
+    namespace: ${APP_NAMESPACE}
+    labels:
+      app: ${APP_NAME}
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: ${APP_NAME}
+    template:
+      metadata:
+        labels:
+          app: ${APP_NAME}
+      spec:
+        containers:
+        - name: test
+          image: >-
+            registry.access.redhat.com/ubi8/ubi:8.2-347
+          command: ["/bin/sh"]
+          args: ["-c", "while true; do echo hello; sleep 10; done"]
+          imagePullPolicy: IfNotPresent
+      

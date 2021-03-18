@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Template
+objects:
+- apiVersion: v1
+  kind: Namespace
+  metadata:
+    name: special-namespace
+    labels:
+      special.compliance.enabled: "true"
+- apiVersion: v1
+  kind: Namespace
+  metadata:
+    name: ordinary-namespace
+    labels:
+      special.compliance.enabled: "true"
+- apiVersion: v1
+  kind: Namespace
+  metadata:
+    name: ignored-namespace

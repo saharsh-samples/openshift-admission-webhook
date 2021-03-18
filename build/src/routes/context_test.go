@@ -11,15 +11,13 @@ import (
 func TestBootstrap(t *testing.T) {
 
 	// Arrange
-	utilsOut := utils.Bootstrap(nil)
 	in := &ContextIn{
-		JSONUtils: utilsOut.JSONUtils,
-		URLUtils:  utilsOut.URLUtils,
+		JSONUtils: utils.Bootstrap(nil).JSONUtils,
 	}
 
 	// Act
 	out := Bootstrap(in)
 
 	// Assert
-	test.AssertEquals("", 1, len(out.RoutesToRegister), t)
+	test.AssertEquals("", 3, len(out.RoutesToRegister), t)
 }
