@@ -20,18 +20,6 @@ func getRawRequest(review *model.AdmissionReview) (map[string]interface{}, error
 	return obj, nil
 }
 
-func getResourceKind(review *model.AdmissionReview) (string, error) {
-	reqObj, err := getRawRequest(review)
-	if err != nil {
-		return "", err
-	}
-	kind, found := (reqObj["kind"]).(string)
-	if !found {
-		return "", fmt.Errorf("Resource has no 'kind'")
-	}
-	return kind, nil
-}
-
 func getResourceMetadataFieldAsString(review *model.AdmissionReview, metadataField string) (string, error) {
 
 	reqObj, err := getRawRequest(review)
@@ -87,8 +75,8 @@ func (h *admissionHelper) denyAdmission(requestUID types.UID, reason string, sta
 	})
 }
 
-func (h *admissionHelper) allowWithoutPatches(requestUID types.UID, jsonUtils utils.JSONUtils, w http.ResponseWriter) {
-	jsonUtils.SetJSONResponse(w, http.StatusOK, &v1beta1.AdmissionReview{
+func (h *admissionHelper) allowWithoutPatches(requestUID types.UID) {
+	h.jsonUtils.SetJSONResponse(h.w, http.StatusOK, &v1beta1.AdmissionReview{
 		Response: &v1beta1.AdmissionResponse{
 			UID:     requestUID,
 			Allowed: true,
@@ -96,7 +84,7 @@ func (h *admissionHelper) allowWithoutPatches(requestUID types.UID, jsonUtils ut
 	})
 }
 
-func (h *admissionHelper) allowWithPatches(requestUID types.UID, patches []string, jsonUtils utils.JSONUtils, w http.ResponseWriter) {
+func (h *admissionHelper) allowWithPatches(requestUID types.UID, patches []string) {
 
 	// create response object
 	response := &v1beta1.AdmissionReview{
@@ -129,5 +117,5 @@ func (h *admissionHelper) allowWithPatches(requestUID types.UID, patches []strin
 	}
 
 	// respond
-	jsonUtils.SetJSONResponse(w, http.StatusOK, response)
+	h.jsonUtils.SetJSONResponse(h.w, http.StatusOK, response)
 }

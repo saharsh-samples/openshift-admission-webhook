@@ -39,11 +39,9 @@ func (resource *namespaceMutator) MutateNamespace(w http.ResponseWriter, r *http
 		h.allowWithPatches(
 			review.Request.UID,
 			[]string{`{ "op" : "add", "path": "/metadata/annotations/openshift.io~1node-selector", "value": "workload-type=special"}`},
-			resource.jsonUtils,
-			w,
 		)
 	} else {
-		h.allowWithoutPatches(review.Request.UID, resource.jsonUtils, w)
+		h.allowWithoutPatches(review.Request.UID)
 	}
 
 }

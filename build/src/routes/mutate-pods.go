@@ -34,11 +34,9 @@ func (resource *podMutator) MutatePod(w http.ResponseWriter, r *http.Request) {
 		h.allowWithPatches(
 			review.Request.UID,
 			[]string{`{ "op" : "add", "path": "/spec/tolerations/-", "value": { "key": "workload-type", "operator": "Equal", "value": "special", "effect": "NoSchedule" }}`},
-			resource.jsonUtils,
-			w,
 		)
 	} else {
-		h.allowWithoutPatches(review.Request.UID, resource.jsonUtils, w)
+		h.allowWithoutPatches(review.Request.UID)
 	}
 
 }
